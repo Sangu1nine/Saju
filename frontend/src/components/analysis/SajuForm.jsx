@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Calendar, 
   Clock, 
@@ -9,7 +9,9 @@ import {
   Moon, 
   Sun, 
   Info,
-  ArrowRight 
+  ArrowRight,
+  Sparkles,
+  Zap
 } from 'lucide-react'
 
 const SajuForm = ({ onSubmit }) => {
@@ -29,6 +31,7 @@ const SajuForm = ({ onSubmit }) => {
 
   // 상태 관리
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [focusedField, setFocusedField] = useState(null)
   const watchIsLunar = watch('is_lunar')
 
   // 도시 목록
@@ -55,295 +58,409 @@ const SajuForm = ({ onSubmit }) => {
   const maxYear = currentYear
 
   return (
-    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
-      {/* 생년월일 */}
-      <div className="space-y-4">
-        <div className="flex items-center mb-3">
-          <Calendar className="w-5 h-5 mr-2 text-primary-600" />
-          <h3 className="text-lg font-semibold text-gray-900">생년월일</h3>
-        </div>
-
-        {/* 양력/음력 선택 */}
-        <div className="grid grid-cols-2 gap-4">
-          <label className="relative">
-            <input
-              type="radio"
-              value={false}
-              {...register('is_lunar')}
-              className="sr-only peer"
-            />
-            <div className="flex items-center justify-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all">
-              <Sun className="w-5 h-5 mr-2 text-yellow-500" />
-              <span className="font-medium">양력</span>
+    <div className="max-w-2xl mx-auto">
+      <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-8">
+        {/* 생년월일 섹션 */}
+        <motion.div 
+          className="card-glow space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center mr-3">
+              <Calendar className="w-5 h-5 text-white" />
             </div>
-          </label>
-          
-          <label className="relative">
-            <input
-              type="radio"
-              value={true}
-              {...register('is_lunar')}
-              className="sr-only peer"
-            />
-            <div className="flex items-center justify-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all">
-              <Moon className="w-5 h-5 mr-2 text-blue-500" />
-              <span className="font-medium">음력</span>
-            </div>
-          </label>
-        </div>
-
-        {/* 날짜 입력 */}
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              년도
-            </label>
-            <select
-              {...register('birth_year', { 
-                required: '년도를 선택해주세요',
-                min: { value: minYear, message: `${minYear}년 이후만 가능합니다` },
-                max: { value: maxYear, message: `${maxYear}년 이전만 가능합니다` }
-              })}
-              className="select"
-            >
-              {Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i).map(year => (
-                <option key={year} value={year}>{year}년</option>
-              ))}
-            </select>
-            {errors.birth_year && (
-              <p className="mt-1 text-sm text-red-600">{errors.birth_year.message}</p>
-            )}
+            <h3 className="text-xl font-bold text-mystic-900">생년월일</h3>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              월
-            </label>
-            <select
-              {...register('birth_month', { 
-                required: '월을 선택해주세요',
-                min: { value: 1, message: '1-12월만 가능합니다' },
-                max: { value: 12, message: '1-12월만 가능합니다' }
-              })}
-              className="select"
-            >
-              {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
-                <option key={month} value={month}>{month}월</option>
-              ))}
-            </select>
-            {errors.birth_month && (
-              <p className="mt-1 text-sm text-red-600">{errors.birth_month.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              일
-            </label>
-            <select
-              {...register('birth_day', { 
-                required: '일을 선택해주세요',
-                min: { value: 1, message: '1-31일만 가능합니다' },
-                max: { value: 31, message: '1-31일만 가능합니다' }
-              })}
-              className="select"
-            >
-              {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
-                <option key={day} value={day}>{day}일</option>
-              ))}
-            </select>
-            {errors.birth_day && (
-              <p className="mt-1 text-sm text-red-600">{errors.birth_day.message}</p>
-            )}
-          </div>
-        </div>
-
-        {/* 윤달 체크 (음력일 때만) */}
-        {watchIsLunar && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="flex items-center"
-          >
-            <input
-              type="checkbox"
-              {...register('is_leap_month')}
-              id="is_leap_month"
-              className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-            />
-            <label htmlFor="is_leap_month" className="ml-2 text-sm text-gray-700">
-              윤달입니다
-            </label>
-            <div className="ml-2 group relative">
-              <Info className="w-4 h-4 text-gray-400 cursor-help" />
-              <div className="tooltip group-hover:opacity-100 bottom-full left-1/2 transform -translate-x-1/2 mb-2">
-                윤달은 음력에서 같은 달이 두 번 나오는 경우입니다
+          {/* 양력/음력 선택 */}
+          <div className="grid grid-cols-2 gap-4">
+            <label className="relative cursor-pointer">
+              <input
+                type="radio"
+                value={false}
+                {...register('is_lunar')}
+                className="sr-only peer"
+              />
+              <div className="flex items-center justify-center p-4 border-2 border-mystic-200 rounded-2xl cursor-pointer peer-checked:border-primary-500 peer-checked:bg-gradient-to-br peer-checked:from-primary-50 peer-checked:to-accent-50 transition-all duration-300 hover:border-primary-300 hover:shadow-soft">
+                <Sun className="w-6 h-6 mr-3 text-amber-500" />
+                <span className="font-semibold text-mystic-900">양력</span>
               </div>
-            </div>
-          </motion.div>
-        )}
-      </div>
-
-      {/* 출생 시간 */}
-      <div className="space-y-4">
-        <div className="flex items-center mb-3">
-          <Clock className="w-5 h-5 mr-2 text-primary-600" />
-          <h3 className="text-lg font-semibold text-gray-900">출생 시간</h3>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              시
             </label>
+            
+            <label className="relative cursor-pointer">
+              <input
+                type="radio"
+                value={true}
+                {...register('is_lunar')}
+                className="sr-only peer"
+              />
+              <div className="flex items-center justify-center p-4 border-2 border-mystic-200 rounded-2xl cursor-pointer peer-checked:border-primary-500 peer-checked:bg-gradient-to-br peer-checked:from-primary-50 peer-checked:to-accent-50 transition-all duration-300 hover:border-primary-300 hover:shadow-soft">
+                <Moon className="w-6 h-6 mr-3 text-blue-500" />
+                <span className="font-semibold text-mystic-900">음력</span>
+              </div>
+            </label>
+          </div>
+
+          {/* 날짜 입력 */}
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-mystic-700 mb-2">
+                년도
+              </label>
+              <select
+                {...register('birth_year', { 
+                  required: '년도를 선택해주세요',
+                  min: { value: minYear, message: `${minYear}년 이후만 가능합니다` },
+                  max: { value: maxYear, message: `${maxYear}년 이전만 가능합니다` }
+                })}
+                className="select focus:ring-primary-500/20 focus:border-primary-500"
+                onFocus={() => setFocusedField('year')}
+                onBlur={() => setFocusedField(null)}
+              >
+                {Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i).map(year => (
+                  <option key={year} value={year}>{year}년</option>
+                ))}
+              </select>
+              <AnimatePresence>
+                {errors.birth_year && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mt-1 text-sm text-red-600"
+                  >
+                    {errors.birth_year.message}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-mystic-700 mb-2">
+                월
+              </label>
+              <select
+                {...register('birth_month', { 
+                  required: '월을 선택해주세요',
+                  min: { value: 1, message: '1-12월만 가능합니다' },
+                  max: { value: 12, message: '1-12월만 가능합니다' }
+                })}
+                className="select focus:ring-primary-500/20 focus:border-primary-500"
+                onFocus={() => setFocusedField('month')}
+                onBlur={() => setFocusedField(null)}
+              >
+                {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                  <option key={month} value={month}>{month}월</option>
+                ))}
+              </select>
+              <AnimatePresence>
+                {errors.birth_month && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mt-1 text-sm text-red-600"
+                  >
+                    {errors.birth_month.message}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-mystic-700 mb-2">
+                일
+              </label>
+              <select
+                {...register('birth_day', { 
+                  required: '일을 선택해주세요',
+                  min: { value: 1, message: '1-31일만 가능합니다' },
+                  max: { value: 31, message: '1-31일만 가능합니다' }
+                })}
+                className="select focus:ring-primary-500/20 focus:border-primary-500"
+                onFocus={() => setFocusedField('day')}
+                onBlur={() => setFocusedField(null)}
+              >
+                {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                  <option key={day} value={day}>{day}일</option>
+                ))}
+              </select>
+              <AnimatePresence>
+                {errors.birth_day && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mt-1 text-sm text-red-600"
+                  >
+                    {errors.birth_day.message}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* 윤달 체크 (음력일 때만) */}
+          <AnimatePresence>
+            {watchIsLunar && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200"
+              >
+                <input
+                  type="checkbox"
+                  {...register('is_leap_month')}
+                  id="is_leap_month"
+                  className="w-5 h-5 text-primary-600 border-2 border-mystic-300 rounded focus:ring-primary-500 focus:ring-2"
+                />
+                <label htmlFor="is_leap_month" className="ml-3 text-sm font-medium text-mystic-700">
+                  윤달입니다
+                </label>
+                <div className="ml-auto group relative">
+                  <Info className="w-5 h-5 text-mystic-400 cursor-help" />
+                  <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-mystic-800 text-white text-xs rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                    윤달은 음력에서 같은 달이 두 번 나오는 경우입니다
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* 출생 시간 섹션 */}
+        <motion.div 
+          className="card-glow space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-accent-500 to-primary-500 rounded-xl flex items-center justify-center mr-3">
+              <Clock className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-mystic-900">출생 시간</h3>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-mystic-700 mb-2">
+                시
+              </label>
+              <select
+                {...register('birth_hour', { 
+                  required: '시간을 선택해주세요',
+                  min: { value: 0, message: '0-23시만 가능합니다' },
+                  max: { value: 23, message: '0-23시만 가능합니다' }
+                })}
+                className="select focus:ring-accent-500/20 focus:border-accent-500"
+              >
+                {Array.from({ length: 24 }, (_, i) => i).map(hour => (
+                  <option key={hour} value={hour}>
+                    {String(hour).padStart(2, '0')}시
+                  </option>
+                ))}
+              </select>
+              <AnimatePresence>
+                {errors.birth_hour && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mt-1 text-sm text-red-600"
+                  >
+                    {errors.birth_hour.message}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-mystic-700 mb-2">
+                분
+              </label>
+              <select
+                {...register('birth_minute', { 
+                  min: { value: 0, message: '0-59분만 가능합니다' },
+                  max: { value: 59, message: '0-59분만 가능합니다' }
+                })}
+                className="select focus:ring-accent-500/20 focus:border-accent-500"
+              >
+                {Array.from({ length: 60 }, (_, i) => i).map(minute => (
+                  <option key={minute} value={minute}>
+                    {String(minute).padStart(2, '0')}분
+                  </option>
+                ))}
+              </select>
+              <AnimatePresence>
+                {errors.birth_minute && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mt-1 text-sm text-red-600"
+                  >
+                    {errors.birth_minute.message}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
+            <div className="flex items-start">
+              <Info className="w-5 h-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" />
+              <p className="text-sm text-amber-800 leading-relaxed">
+                출생 시간이 정확하지 않다면 대략적인 시간을 입력해주세요. 
+                시간이 정확할수록 더 정밀한 분석이 가능합니다.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 성별 섹션 */}
+        <motion.div 
+          className="card-glow space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-3">
+              <User className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-mystic-900">성별</h3>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <label className="relative cursor-pointer">
+              <input
+                type="radio"
+                value={true}
+                {...register('is_male', { required: '성별을 선택해주세요' })}
+                className="sr-only peer"
+              />
+              <div className="flex items-center justify-center p-4 border-2 border-mystic-200 rounded-2xl cursor-pointer peer-checked:border-blue-500 peer-checked:bg-gradient-to-br peer-checked:from-blue-50 peer-checked:to-indigo-50 transition-all duration-300 hover:border-blue-300 hover:shadow-soft">
+                <span className="font-semibold text-mystic-900">남성 👨</span>
+              </div>
+            </label>
+            
+            <label className="relative cursor-pointer">
+              <input
+                type="radio"
+                value={false}
+                {...register('is_male', { required: '성별을 선택해주세요' })}
+                className="sr-only peer"
+              />
+              <div className="flex items-center justify-center p-4 border-2 border-mystic-200 rounded-2xl cursor-pointer peer-checked:border-pink-500 peer-checked:bg-gradient-to-br peer-checked:from-pink-50 peer-checked:to-rose-50 transition-all duration-300 hover:border-pink-300 hover:shadow-soft">
+                <span className="font-semibold text-mystic-900">여성 👩</span>
+              </div>
+            </label>
+          </div>
+          <AnimatePresence>
+            {errors.is_male && (
+              <motion.p 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="mt-1 text-sm text-red-600"
+              >
+                {errors.is_male.message}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* 출생 지역 섹션 */}
+        <motion.div 
+          className="card-glow space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mr-3">
+              <MapPin className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-mystic-900">출생 지역</h3>
+          </div>
+
+          <div>
             <select
-              {...register('birth_hour', { 
-                required: '시간을 선택해주세요',
-                min: { value: 0, message: '0-23시만 가능합니다' },
-                max: { value: 23, message: '0-23시만 가능합니다' }
-              })}
-              className="select"
+              {...register('city', { required: '출생 지역을 선택해주세요' })}
+              className="select focus:ring-green-500/20 focus:border-green-500"
             >
-              {Array.from({ length: 24 }, (_, i) => i).map(hour => (
-                <option key={hour} value={hour}>
-                  {String(hour).padStart(2, '0')}시
-                </option>
+              {cities.map(city => (
+                <option key={city} value={city}>{city}</option>
               ))}
             </select>
-            {errors.birth_hour && (
-              <p className="mt-1 text-sm text-red-600">{errors.birth_hour.message}</p>
-            )}
+            <AnimatePresence>
+              {errors.city && (
+                <motion.p 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="mt-1 text-sm text-red-600"
+                >
+                  {errors.city.message}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              분
-            </label>
-            <select
-              {...register('birth_minute', { 
-                min: { value: 0, message: '0-59분만 가능합니다' },
-                max: { value: 59, message: '0-59분만 가능합니다' }
-              })}
-              className="select"
-            >
-              {Array.from({ length: 60 }, (_, i) => i).map(minute => (
-                <option key={minute} value={minute}>
-                  {String(minute).padStart(2, '0')}분
-                </option>
-              ))}
-            </select>
-            {errors.birth_minute && (
-              <p className="mt-1 text-sm text-red-600">{errors.birth_minute.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <div className="flex items-start">
-            <Info className="w-4 h-4 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" />
-            <p className="text-sm text-yellow-800">
-              출생 시간이 정확하지 않다면 대략적인 시간을 입력해주세요. 
-              시간이 정확할수록 더 정밀한 분석이 가능합니다.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 성별 */}
-      <div className="space-y-4">
-        <div className="flex items-center mb-3">
-          <User className="w-5 h-5 mr-2 text-primary-600" />
-          <h3 className="text-lg font-semibold text-gray-900">성별</h3>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <label className="relative">
-            <input
-              type="radio"
-              value={true}
-              {...register('is_male', { required: '성별을 선택해주세요' })}
-              className="sr-only peer"
-            />
-            <div className="flex items-center justify-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all">
-              <span className="font-medium">남성</span>
+          <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-xl">
+            <div className="flex items-start">
+              <Info className="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
+              <p className="text-sm text-blue-800 leading-relaxed">
+                출생 지역은 경도 보정을 위해 사용됩니다. 
+                정확한 사주 계산을 위해 실제 출생 지역을 선택해주세요.
+              </p>
             </div>
-          </label>
-          
-          <label className="relative">
-            <input
-              type="radio"
-              value={false}
-              {...register('is_male', { required: '성별을 선택해주세요' })}
-              className="sr-only peer"
-            />
-            <div className="flex items-center justify-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all">
-              <span className="font-medium">여성</span>
-            </div>
-          </label>
-        </div>
-        {errors.is_male && (
-          <p className="mt-1 text-sm text-red-600">{errors.is_male.message}</p>
-        )}
-      </div>
+          </div>
+        </motion.div>
 
-      {/* 출생 지역 */}
-      <div className="space-y-4">
-        <div className="flex items-center mb-3">
-          <MapPin className="w-5 h-5 mr-2 text-primary-600" />
-          <h3 className="text-lg font-semibold text-gray-900">출생 지역</h3>
-        </div>
-
-        <div>
-          <select
-            {...register('city', { required: '출생 지역을 선택해주세요' })}
-            className="select"
+        {/* 제출 버튼 */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <motion.button
+            type="submit"
+            disabled={isSubmitting}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full relative overflow-hidden bg-gradient-to-r from-primary-600 via-accent-600 to-primary-700 text-white py-5 rounded-2xl text-lg font-bold shadow-strong hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
           >
-            {cities.map(city => (
-              <option key={city} value={city}>{city}</option>
-            ))}
-          </select>
-          {errors.city && (
-            <p className="mt-1 text-sm text-red-600">{errors.city.message}</p>
-          )}
-        </div>
-
-        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-start">
-            <Info className="w-4 h-4 text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
-            <p className="text-sm text-blue-800">
-              출생 지역은 경도 보정을 위해 사용됩니다. 
-              정확한 사주 계산을 위해 실제 출생 지역을 선택해주세요.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 제출 버튼 */}
-      <motion.button
-        type="submit"
-        disabled={isSubmitting}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        className="w-full btn-primary py-4 text-lg font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isSubmitting ? (
-          <div className="flex items-center justify-center">
-            <div className="loading-dots mr-2">
-              <div style={{'--i': 0}}></div>
-              <div style={{'--i': 1}}></div>
-              <div style={{'--i': 2}}></div>
-            </div>
-            분석 시작 중...
-          </div>
-        ) : (
-          <div className="flex items-center justify-center">
-            AI 분석 시작하기
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </div>
-        )}
-      </motion.button>
-    </form>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-700 via-accent-700 to-primary-800 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+            
+            {isSubmitting ? (
+              <div className="flex items-center justify-center relative z-10">
+                <div className="loading-dots mr-3">
+                  <div style={{'--i': 0}} className="bg-white"></div>
+                  <div style={{'--i': 1}} className="bg-white"></div>
+                  <div style={{'--i': 2}} className="bg-white"></div>
+                </div>
+                AI 분석 시작 중...
+              </div>
+            ) : (
+              <div className="flex items-center justify-center relative z-10">
+                <Zap className="w-6 h-6 mr-3 animate-pulse" />
+                AI 분석 시작하기
+                <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
+              </div>
+            )}
+            
+            {/* 버튼 내부 빛나는 효과 */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] hover:translate-x-[100%] transition-transform duration-1000" />
+          </motion.button>
+        </motion.div>
+      </form>
+    </div>
   )
 }
 
