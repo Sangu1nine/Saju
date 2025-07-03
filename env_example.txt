@@ -1,0 +1,45 @@
+# .env 파일로 복사해서 사용하세요
+# 파일명: .env
+
+# OpenAI API 설정 (필수)
+OPENAI_API_KEY=your_openai_api_key_here
+
+# LangSmith 추적 설정 (선택사항)
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY=your_langsmith_api_key_here
+LANGCHAIN_PROJECT=saju-analysis
+
+# API 서버 설정
+API_HOST=0.0.0.0
+API_PORT=8000
+API_RELOAD=true
+
+# GPT 모델 설정
+OPENAI_MODEL=gpt-4.1
+OPENAI_MAX_TOKENS=2000
+OPENAI_TEMPERATURE=0.7
+
+# KASI API 설정 (음력 변환용)
+KASI_SERVICE_KEY_LUNAR=AotiP0GO8N2hRMDmUWaZnn13%2FL9keIfPEk7T2xv0yhDj09Hg%2BSTeKn4VLiUElgdy55b17tQtiPRf9A9SiANHWQ%3D%3D
+KASI_SERVICE_KEY_24_DIVISIONS=AotiP0GO8N2hRMDmUWaZnn13%2FL9keIfPEk7T2xv0yhDj09Hg%2BSTeKn4VLiUElgdy55b17tQtiPRf9A9SiANHWQ%3D%3D
+
+# 로깅 레벨
+LOG_LEVEL=INFO
+
+# Redis 설정 (선택사항)
+REDIS_URL=redis://localhost:6379
+REDIS_PASSWORD=
+
+# 데이터베이스 설정 (선택사항)
+DATABASE_URL=sqlite:///./saju_analysis.db
+
+# CORS 설정
+CORS_ORIGINS=["http://localhost:3000", "http://localhost:8080"]
+
+# 사주 분석 설정
+ANALYSIS_MAX_RETRIES=3
+ANALYSIS_TIMEOUT=30
+
+# 웹소켓 설정
+WEBSOCKET_PING_INTERVAL=20
+WEBSOCKET_PING_TIMEOUT=10 
