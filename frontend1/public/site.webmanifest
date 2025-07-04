@@ -1,0 +1,14 @@
+{
+  "name": "사주 분석 서비스",
+  "short_name": "사주 분석",
+  "description": "AI 기반 전문 사주 분석 서비스",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": ["lifestyle", "productivity"]
+} 

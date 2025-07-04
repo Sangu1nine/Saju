@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,7 +10,7 @@
   }
   
   body {
-    @apply bg-gradient-to-br from-slate-50 to-slate-100 text-slate-900;
+    @apply bg-neutral-50 text-neutral-900 font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -21,128 +22,123 @@
   
   /* 스크롤바 스타일링 */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-slate-100;
+    @apply bg-neutral-100;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-slate-300 rounded-full;
+    @apply bg-neutral-300 rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-slate-400;
+    @apply bg-neutral-400;
   }
 }
 
 /* 컴포넌트 스타일 */
 @layer components {
-  /* 버튼 기본 스타일 */
-  .btn {
-    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium 
-           transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
-           disabled:opacity-50 disabled:cursor-not-allowed;
+  /* 섹션 스타일 */
+  .section {
+    @apply py-20 lg:py-24;
   }
   
-  .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
   
-  .btn-secondary {
-    @apply btn bg-secondary-200 text-secondary-900 hover:bg-secondary-300 focus:ring-secondary-500;
+  .section-header {
+    @apply text-center mb-16;
   }
   
-  .btn-outline {
-    @apply btn border border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500;
+  .section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-6;
   }
   
-  .btn-ghost {
-    @apply btn text-secondary-700 hover:bg-secondary-100 focus:ring-secondary-500;
-  }
-  
-  /* 입력 필드 스타일 */
-  .input {
-    @apply w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm
-           placeholder:text-secondary-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500
-           disabled:bg-secondary-50 disabled:cursor-not-allowed;
-  }
-  
-  .select {
-    @apply input appearance-none bg-no-repeat bg-right bg-white;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 0.5rem center;
-    background-size: 1.5em 1.5em;
-    padding-right: 2.5rem;
+  .section-subtitle {
+    @apply text-lg md:text-xl text-neutral-600 max-w-3xl mx-auto;
   }
   
   /* 카드 스타일 */
   .card {
-    @apply rounded-xl bg-white p-6 shadow-soft border border-secondary-200;
+    @apply bg-white rounded-2xl shadow-soft border border-neutral-200 p-6;
   }
   
   .card-hover {
-    @apply card transition-all duration-200 hover:shadow-strong hover:-translate-y-1;
+    @apply card transition-all duration-300 hover:shadow-medium hover:-translate-y-1;
+  }
+  
+  .card-section {
+    @apply bg-white rounded-3xl shadow-strong border border-neutral-100 overflow-hidden;
+  }
+  
+  /* 버튼 스타일 */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold 
+           transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 
+           shadow-lg hover:shadow-xl transform hover:scale-105;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-white text-neutral-700 border border-neutral-300 hover:bg-neutral-50 
+           focus:ring-neutral-500 shadow-sm hover:shadow-md;
+  }
+  
+  .btn-gradient {
+    @apply btn bg-gradient-to-r from-primary-600 to-accent-600 text-white 
+           hover:from-primary-700 hover:to-accent-700 focus:ring-primary-500 
+           shadow-lg hover:shadow-xl transform hover:scale-105;
+  }
+  
+  /* 입력 필드 스타일 */
+  .input {
+    @apply w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm
+           placeholder:text-neutral-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20
+           disabled:bg-neutral-50 disabled:cursor-not-allowed transition-all duration-200;
+  }
+  
+  .select {
+    @apply input appearance-none bg-no-repeat bg-right pr-10;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-size: 1.5em 1.5em;
+  }
+  
+  /* 그리드 레이아웃 */
+  .grid-section {
+    @apply grid grid-cols-1 lg:grid-cols-12 gap-8;
+  }
+  
+  .grid-main {
+    @apply lg:col-span-8;
+  }
+  
+  .grid-sidebar {
+    @apply lg:col-span-4;
   }
   
   /* 배지 스타일 */
   .badge {
-    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
   }
   
   .badge-primary {
-    @apply badge bg-primary-100 text-primary-800;
+    @apply badge bg-primary-100 text-primary-800 border border-primary-200;
   }
   
-  .badge-secondary {
-    @apply badge bg-secondary-100 text-secondary-800;
+  .badge-accent {
+    @apply badge bg-accent-100 text-accent-800 border border-accent-200;
   }
   
   .badge-success {
-    @apply badge bg-green-100 text-green-800;
-  }
-  
-  .badge-warning {
-    @apply badge bg-yellow-100 text-yellow-800;
-  }
-  
-  .badge-error {
-    @apply badge bg-red-100 text-red-800;
-  }
-  
-  /* 오행 배지 스타일 */
-  .badge-wood {
-    @apply badge bg-green-100 text-green-800;
-  }
-  
-  .badge-fire {
-    @apply badge bg-red-100 text-red-800;
-  }
-  
-  .badge-earth {
-    @apply badge bg-yellow-100 text-yellow-800;
-  }
-  
-  .badge-metal {
-    @apply badge bg-gray-100 text-gray-800;
-  }
-  
-  .badge-water {
-    @apply badge bg-blue-100 text-blue-800;
-  }
-  
-  /* 한자 텍스트 스타일 */
-  .hanja {
-    @apply font-hanja font-medium;
-  }
-  
-  .hanja-large {
-    @apply hanja text-lg;
-  }
-  
-  .hanja-xl {
-    @apply hanja text-xl;
+    @apply badge bg-emerald-100 text-emerald-800 border border-emerald-200;
   }
   
   /* 그라데이션 텍스트 */
@@ -150,52 +146,29 @@
     @apply bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent;
   }
   
-  /* 로딩 애니메이션 */
-  .loading-dots {
-    @apply inline-flex space-x-1;
+  /* 헤더 스타일 */
+  .header-section {
+    @apply bg-white border-b border-neutral-200 sticky top-0 z-50;
   }
   
-  .loading-dots > div {
-    @apply w-2 h-2 bg-current rounded-full animate-pulse;
-    animation-delay: calc(var(--i, 0) * 0.2s);
+  /* 히어로 섹션 */
+  .hero-section {
+    @apply bg-gradient-to-br from-neutral-50 via-white to-primary-50/30 py-20 lg:py-32;
   }
   
-  /* 진행 바 */
-  .progress-bar {
-    @apply w-full bg-secondary-200 rounded-full h-2 overflow-hidden;
+  /* 특징 섹션 */
+  .features-section {
+    @apply bg-neutral-50 py-20 lg:py-24;
   }
   
-  .progress-bar-fill {
-    @apply h-full bg-gradient-to-r from-primary-500 to-accent-500 transition-all duration-500 ease-out;
+  /* CTA 섹션 */
+  .cta-section {
+    @apply bg-gradient-to-r from-primary-600 to-accent-600 py-20 lg:py-24;
   }
   
-  /* 툴팁 */
-  .tooltip {
-    @apply absolute z-50 px-3 py-2 text-sm text-white bg-secondary-800 rounded-lg shadow-lg
-           opacity-0 pointer-events-none transition-opacity duration-200;
-  }
-  
-  .tooltip-arrow {
-    @apply absolute w-2 h-2 bg-secondary-800 transform rotate-45;
-  }
-  
-  /* 모달 오버레이 */
-  .modal-overlay {
-    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50
-           opacity-0 pointer-events-none transition-opacity duration-300;
-  }
-  
-  .modal-overlay.active {
-    @apply opacity-100 pointer-events-auto;
-  }
-  
-  .modal-content {
-    @apply bg-white rounded-xl shadow-strong max-w-md w-full mx-4 p-6
-           transform scale-95 transition-transform duration-300;
-  }
-  
-  .modal-overlay.active .modal-content {
-    @apply scale-100;
+  /* 푸터 섹션 */
+  .footer-section {
+    @apply bg-neutral-900 text-neutral-300 py-16;
   }
 }
 
@@ -214,72 +187,31 @@
     display: none;
   }
   
-  /* 인터랙티브 상태 */
-  .interactive {
-    @apply transition-all duration-200 cursor-pointer;
+  /* 애니메이션 */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
   }
   
-  .interactive:hover {
-    @apply scale-105;
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out;
   }
   
-  .interactive:active {
-    @apply scale-95;
-  }
-  
-  /* 포커스 스타일 */
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
-  }
-  
-  /* 스켈레톤 로딩 */
-  .skeleton {
-    @apply animate-pulse bg-secondary-200 rounded;
-  }
-  
-  /* 성공/에러 상태 */
-  .state-success {
-    @apply border-green-300 bg-green-50 text-green-900;
-  }
-  
-  .state-error {
-    @apply border-red-300 bg-red-50 text-red-900;
-  }
-  
-  .state-warning {
-    @apply border-yellow-300 bg-yellow-50 text-yellow-900;
-  }
-  
-  .state-info {
-    @apply border-blue-300 bg-blue-50 text-blue-900;
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out;
   }
 }
 
-/* 미디어 쿼리 */
+/* 반응형 조정 */
 @media (max-width: 640px) {
   .card {
     @apply p-4;
   }
   
   .btn {
-    @apply px-3 py-1.5 text-xs;
-  }
-}
-
-/* 다크 모드 지원 (추후 구현용) */
-@media (prefers-color-scheme: dark) {
-  .dark {
-    /* 다크 모드 스타일 */
-  }
-}
-
-/* 프린트 스타일 */
-@media print {
-  .no-print {
-    display: none !important;
+    @apply px-4 py-2 text-xs;
   }
   
-  .card {
-    @apply shadow-none border border-secondary-300;
+  .section {
+    @apply py-12;
   }
 }

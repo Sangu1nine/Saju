@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>사주 분석 시스템</title>
+    <meta name="description" content="AI 기반 전문 사주 분석 서비스" />
+    <meta name="keywords" content="사주, 명리학, AI, 분석, 운세" />
+    
+    <!-- 한글 폰트 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- 파비콘 -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- 메타 태그 -->
+    <meta name="theme-color" content="#e06156" />
+    <meta property="og:title" content="사주 분석 시스템" />
+    <meta property="og:description" content="AI 기반 전문 사주 분석 서비스" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://saju-analysis.com" />
+    <meta property="og:image" content="/og-image.jpg" />
+    
+    <!-- 트위터 카드 -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="사주 분석 시스템" />
+    <meta name="twitter:description" content="AI 기반 전문 사주 분석 서비스" />
+    <meta name="twitter:image" content="/og-image.jpg" />
+    
+    <!-- 로딩 스타일 -->
+    <style>
+      #loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease-out;
+      }
+      
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .loading-text {
+        margin-top: 20px;
+        color: white;
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 18px;
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body class="font-korean antialiased">
+    <!-- 로딩 화면 -->
+    <div id="loading-screen">
+      <div class="text-center">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">사주 분석 시스템 로딩중...</div>
+      </div>
+    </div>
+    
+    <!-- 메인 앱 -->
+    <div id="root"></div>
+    
+    <!-- 로딩 제거 스크립트 -->
+    <script>
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loadingScreen = document.getElementById('loading-screen');
+          if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+              loadingScreen.style.display = 'none';
+            }, 300);
+          }
+        }, 1000);
+      });
+    </script>
+    
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

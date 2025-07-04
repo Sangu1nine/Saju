@@ -31,6 +31,7 @@ const SajuForm = ({ onSubmit }) => {
 
   // 상태 관리
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [focusedField, setFocusedField] = useState(null)
   const watchIsLunar = watch('is_lunar')
 
   // 도시 목록
@@ -57,15 +58,20 @@ const SajuForm = ({ onSubmit }) => {
   const maxYear = currentYear
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-2xl mx-auto">
       <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-8">
         {/* 생년월일 섹션 */}
-        <div className="card space-y-6">
+        <motion.div 
+          className="card-glow space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="flex items-center mb-4">
             <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center mr-3">
               <Calendar className="w-5 h-5 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-neutral-900">생년월일</h3>
+            <h3 className="text-xl font-bold text-mystic-900">생년월일</h3>
           </div>
 
           {/* 양력/음력 선택 */}
@@ -77,9 +83,9 @@ const SajuForm = ({ onSubmit }) => {
                 {...register('is_lunar')}
                 className="sr-only peer"
               />
-              <div className="flex items-center justify-center p-4 border-2 border-neutral-200 rounded-2xl cursor-pointer peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all duration-300 hover:border-primary-300">
+              <div className="flex items-center justify-center p-4 border-2 border-mystic-200 rounded-2xl cursor-pointer peer-checked:border-primary-500 peer-checked:bg-gradient-to-br peer-checked:from-primary-50 peer-checked:to-accent-50 transition-all duration-300 hover:border-primary-300 hover:shadow-soft">
                 <Sun className="w-6 h-6 mr-3 text-amber-500" />
-                <span className="font-semibold text-neutral-900">양력</span>
+                <span className="font-semibold text-mystic-900">양력</span>
               </div>
             </label>
             
@@ -90,9 +96,9 @@ const SajuForm = ({ onSubmit }) => {
                 {...register('is_lunar')}
                 className="sr-only peer"
               />
-              <div className="flex items-center justify-center p-4 border-2 border-neutral-200 rounded-2xl cursor-pointer peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all duration-300 hover:border-primary-300">
+              <div className="flex items-center justify-center p-4 border-2 border-mystic-200 rounded-2xl cursor-pointer peer-checked:border-primary-500 peer-checked:bg-gradient-to-br peer-checked:from-primary-50 peer-checked:to-accent-50 transition-all duration-300 hover:border-primary-300 hover:shadow-soft">
                 <Moon className="w-6 h-6 mr-3 text-blue-500" />
-                <span className="font-semibold text-neutral-900">음력</span>
+                <span className="font-semibold text-mystic-900">음력</span>
               </div>
             </label>
           </div>
@@ -100,7 +106,7 @@ const SajuForm = ({ onSubmit }) => {
           {/* 날짜 입력 */}
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              <label className="block text-sm font-semibold text-mystic-700 mb-2">
                 년도
               </label>
               <select
@@ -109,7 +115,9 @@ const SajuForm = ({ onSubmit }) => {
                   min: { value: minYear, message: `${minYear}년 이후만 가능합니다` },
                   max: { value: maxYear, message: `${maxYear}년 이전만 가능합니다` }
                 })}
-                className="select"
+                className="select focus:ring-primary-500/20 focus:border-primary-500"
+                onFocus={() => setFocusedField('year')}
+                onBlur={() => setFocusedField(null)}
               >
                 {Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i).map(year => (
                   <option key={year} value={year}>{year}년</option>
@@ -130,7 +138,7 @@ const SajuForm = ({ onSubmit }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              <label className="block text-sm font-semibold text-mystic-700 mb-2">
                 월
               </label>
               <select
@@ -139,7 +147,9 @@ const SajuForm = ({ onSubmit }) => {
                   min: { value: 1, message: '1-12월만 가능합니다' },
                   max: { value: 12, message: '1-12월만 가능합니다' }
                 })}
-                className="select"
+                className="select focus:ring-primary-500/20 focus:border-primary-500"
+                onFocus={() => setFocusedField('month')}
+                onBlur={() => setFocusedField(null)}
               >
                 {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
                   <option key={month} value={month}>{month}월</option>
@@ -160,7 +170,7 @@ const SajuForm = ({ onSubmit }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              <label className="block text-sm font-semibold text-mystic-700 mb-2">
                 일
               </label>
               <select
@@ -169,7 +179,9 @@ const SajuForm = ({ onSubmit }) => {
                   min: { value: 1, message: '1-31일만 가능합니다' },
                   max: { value: 31, message: '1-31일만 가능합니다' }
                 })}
-                className="select"
+                className="select focus:ring-primary-500/20 focus:border-primary-500"
+                onFocus={() => setFocusedField('day')}
+                onBlur={() => setFocusedField(null)}
               >
                 {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
                   <option key={day} value={day}>{day}일</option>
@@ -198,40 +210,45 @@ const SajuForm = ({ onSubmit }) => {
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
-                className="flex items-center p-4 bg-blue-50 rounded-xl border border-blue-200"
+                className="flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200"
               >
                 <input
                   type="checkbox"
                   {...register('is_leap_month')}
                   id="is_leap_month"
-                  className="w-5 h-5 text-primary-600 border-2 border-neutral-300 rounded focus:ring-primary-500 focus:ring-2"
+                  className="w-5 h-5 text-primary-600 border-2 border-mystic-300 rounded focus:ring-primary-500 focus:ring-2"
                 />
-                <label htmlFor="is_leap_month" className="ml-3 text-sm font-medium text-neutral-700">
+                <label htmlFor="is_leap_month" className="ml-3 text-sm font-medium text-mystic-700">
                   윤달입니다
                 </label>
                 <div className="ml-auto group relative">
-                  <Info className="w-5 h-5 text-neutral-400 cursor-help" />
-                  <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-neutral-800 text-white text-xs rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                  <Info className="w-5 h-5 text-mystic-400 cursor-help" />
+                  <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-mystic-800 text-white text-xs rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                     윤달은 음력에서 같은 달이 두 번 나오는 경우입니다
                   </div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
 
         {/* 출생 시간 섹션 */}
-        <div className="card space-y-6">
+        <motion.div 
+          className="card-glow space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
           <div className="flex items-center mb-4">
             <div className="w-10 h-10 bg-gradient-to-br from-accent-500 to-primary-500 rounded-xl flex items-center justify-center mr-3">
               <Clock className="w-5 h-5 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-neutral-900">출생 시간</h3>
+            <h3 className="text-xl font-bold text-mystic-900">출생 시간</h3>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              <label className="block text-sm font-semibold text-mystic-700 mb-2">
                 시
               </label>
               <select
@@ -240,7 +257,7 @@ const SajuForm = ({ onSubmit }) => {
                   min: { value: 0, message: '0-23시만 가능합니다' },
                   max: { value: 23, message: '0-23시만 가능합니다' }
                 })}
-                className="select"
+                className="select focus:ring-accent-500/20 focus:border-accent-500"
               >
                 {Array.from({ length: 24 }, (_, i) => i).map(hour => (
                   <option key={hour} value={hour}>
@@ -263,7 +280,7 @@ const SajuForm = ({ onSubmit }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              <label className="block text-sm font-semibold text-mystic-700 mb-2">
                 분
               </label>
               <select
@@ -271,7 +288,7 @@ const SajuForm = ({ onSubmit }) => {
                   min: { value: 0, message: '0-59분만 가능합니다' },
                   max: { value: 59, message: '0-59분만 가능합니다' }
                 })}
-                className="select"
+                className="select focus:ring-accent-500/20 focus:border-accent-500"
               >
                 {Array.from({ length: 60 }, (_, i) => i).map(minute => (
                   <option key={minute} value={minute}>
@@ -294,7 +311,7 @@ const SajuForm = ({ onSubmit }) => {
             </div>
           </div>
 
-          <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+          <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
             <div className="flex items-start">
               <Info className="w-5 h-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" />
               <p className="text-sm text-amber-800 leading-relaxed">
@@ -303,15 +320,20 @@ const SajuForm = ({ onSubmit }) => {
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* 성별 섹션 */}
-        <div className="card space-y-6">
+        <motion.div 
+          className="card-glow space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           <div className="flex items-center mb-4">
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-3">
               <User className="w-5 h-5 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-neutral-900">성별</h3>
+            <h3 className="text-xl font-bold text-mystic-900">성별</h3>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -322,8 +344,8 @@ const SajuForm = ({ onSubmit }) => {
                 {...register('is_male', { required: '성별을 선택해주세요' })}
                 className="sr-only peer"
               />
-              <div className="flex items-center justify-center p-4 border-2 border-neutral-200 rounded-2xl cursor-pointer peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-300 hover:border-blue-300">
-                <span className="font-semibold text-neutral-900">남성 👨</span>
+              <div className="flex items-center justify-center p-4 border-2 border-mystic-200 rounded-2xl cursor-pointer peer-checked:border-blue-500 peer-checked:bg-gradient-to-br peer-checked:from-blue-50 peer-checked:to-indigo-50 transition-all duration-300 hover:border-blue-300 hover:shadow-soft">
+                <span className="font-semibold text-mystic-900">남성 👨</span>
               </div>
             </label>
             
@@ -334,8 +356,8 @@ const SajuForm = ({ onSubmit }) => {
                 {...register('is_male', { required: '성별을 선택해주세요' })}
                 className="sr-only peer"
               />
-              <div className="flex items-center justify-center p-4 border-2 border-neutral-200 rounded-2xl cursor-pointer peer-checked:border-pink-500 peer-checked:bg-pink-50 transition-all duration-300 hover:border-pink-300">
-                <span className="font-semibold text-neutral-900">여성 👩</span>
+              <div className="flex items-center justify-center p-4 border-2 border-mystic-200 rounded-2xl cursor-pointer peer-checked:border-pink-500 peer-checked:bg-gradient-to-br peer-checked:from-pink-50 peer-checked:to-rose-50 transition-all duration-300 hover:border-pink-300 hover:shadow-soft">
+                <span className="font-semibold text-mystic-900">여성 👩</span>
               </div>
             </label>
           </div>
@@ -351,21 +373,26 @@ const SajuForm = ({ onSubmit }) => {
               </motion.p>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
 
         {/* 출생 지역 섹션 */}
-        <div className="card space-y-6">
+        <motion.div 
+          className="card-glow space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
           <div className="flex items-center mb-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-500 rounded-xl flex items-center justify-center mr-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mr-3">
               <MapPin className="w-5 h-5 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-neutral-900">출생 지역</h3>
+            <h3 className="text-xl font-bold text-mystic-900">출생 지역</h3>
           </div>
 
           <div>
             <select
               {...register('city', { required: '출생 지역을 선택해주세요' })}
-              className="select"
+              className="select focus:ring-green-500/20 focus:border-green-500"
             >
               {cities.map(city => (
                 <option key={city} value={city}>{city}</option>
@@ -385,7 +412,7 @@ const SajuForm = ({ onSubmit }) => {
             </AnimatePresence>
           </div>
 
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+          <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-xl">
             <div className="flex items-start">
               <Info className="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
               <p className="text-sm text-blue-800 leading-relaxed">
@@ -394,33 +421,44 @@ const SajuForm = ({ onSubmit }) => {
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* 제출 버튼 */}
-        <motion.button
-          type="submit"
-          disabled={isSubmitting}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="w-full btn-gradient py-5 text-lg font-bold relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
         >
-          {isSubmitting ? (
-            <div className="flex items-center justify-center">
-              <div className="loading-dots mr-3">
-                <div style={{'--i': 0}} className="bg-white w-2 h-2 rounded-full animate-pulse"></div>
-                <div style={{'--i': 1}} className="bg-white w-2 h-2 rounded-full animate-pulse"></div>
-                <div style={{'--i': 2}} className="bg-white w-2 h-2 rounded-full animate-pulse"></div>
+          <motion.button
+            type="submit"
+            disabled={isSubmitting}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full relative overflow-hidden bg-gradient-to-r from-primary-600 via-accent-600 to-primary-700 text-white py-5 rounded-2xl text-lg font-bold shadow-strong hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-700 via-accent-700 to-primary-800 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+            
+            {isSubmitting ? (
+              <div className="flex items-center justify-center relative z-10">
+                <div className="loading-dots mr-3">
+                  <div style={{'--i': 0}} className="bg-white"></div>
+                  <div style={{'--i': 1}} className="bg-white"></div>
+                  <div style={{'--i': 2}} className="bg-white"></div>
+                </div>
+                AI 분석 시작 중...
               </div>
-              AI 분석 시작 중...
-            </div>
-          ) : (
-            <div className="flex items-center justify-center">
-              <Zap className="w-6 h-6 mr-3" />
-              AI 분석 시작하기
-              <ArrowRight className="w-5 h-5 ml-3" />
-            </div>
-          )}
-        </motion.button>
+            ) : (
+              <div className="flex items-center justify-center relative z-10">
+                <Zap className="w-6 h-6 mr-3 animate-pulse" />
+                AI 분석 시작하기
+                <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
+              </div>
+            )}
+            
+            {/* 버튼 내부 빛나는 효과 */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] hover:translate-x-[100%] transition-transform duration-1000" />
+          </motion.button>
+        </motion.div>
       </form>
     </div>
   )

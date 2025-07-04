@@ -327,18 +327,18 @@ async def analyze_saju_stream(request: SajuRequest):
         
         saju_data = calculate_solar_saju(
             birth_year, birth_month, birth_day, 
-            request.birth_hour, request.birth_minute
+            request.birth_hour, request.birth_minute,
+            male=request.is_male, city=request.city
         )
         
         saju_obj = SajuData(
-            birth_info=saju_data['birth_info'],
             year_pillar=saju_data['year_pillar'],
             month_pillar=saju_data['month_pillar'],
             day_pillar=saju_data['day_pillar'],
             hour_pillar=saju_data['hour_pillar'],
-            lunar_birth_info=saju_data.get('lunar_birth_info'),
-            solar_birth_info=saju_data.get('solar_birth_info'),
-            additional_info=saju_data.get('additional_info', {})
+            birth_info=saju_data['birth_info'],
+            elements=saju_data['elements'],
+            great_luck=saju_data['great_luck']
         )
         
     except Exception as e:
@@ -356,7 +356,7 @@ async def analyze_saju_stream(request: SajuRequest):
                 # 각 단계별 데이터 스트리밍
                 if stream_data["type"] == "start":
                     # 분석 시작 알림
-                    yield f"data: {json.dumps({
+                    data_json = json.dumps({
                         'type': 'start',
                         'analysis_id': analysis_id,
                         'message': stream_data['message'],
@@ -368,11 +368,12 @@ async def analyze_saju_stream(request: SajuRequest):
                             'hour_pillar': saju_obj.hour_pillar,
                             'birth_info': saju_obj.birth_info
                         }
-                    }, ensure_ascii=False)}\n\n"
+                    }, ensure_ascii=False)
+                    yield f"data: {data_json}\n\n"
                 
                 elif stream_data["type"] == "step_start":
                     # 단계 시작 알림
-                    yield f"data: {json.dumps({
+                    data_json = json.dumps({
                         'type': 'step_start',
                         'step': stream_data['step'],
                         'total_steps': stream_data['total_steps'],
@@ -380,11 +381,12 @@ async def analyze_saju_stream(request: SajuRequest):
                         'progress_percentage': stream_data['progress_percentage'],
                         'message': stream_data['message'],
                         'timestamp': datetime.now().isoformat()
-                    }, ensure_ascii=False)}\n\n"
+                    }, ensure_ascii=False)
+                    yield f"data: {data_json}\n\n"
                 
                 elif stream_data["type"] == "step_complete":
                     # 단계 완료 및 결과 스트리밍
-                    yield f"data: {json.dumps({
+                    data_json = json.dumps({
                         'type': 'step_complete',
                         'step': stream_data['step'],
                         'step_name': stream_data['step_name'],
@@ -392,21 +394,23 @@ async def analyze_saju_stream(request: SajuRequest):
                         'progress_percentage': stream_data['progress_percentage'],
                         'message': stream_data['message'],
                         'timestamp': datetime.now().isoformat()
-                    }, ensure_ascii=False)}\n\n"
+                    }, ensure_ascii=False)
+                    yield f"data: {data_json}\n\n"
                     
                     # 스트리밍 속도 조절 (너무 빠르면 읽기 어려움)
                     await asyncio.sleep(0.3)
                 
                 elif stream_data["type"] == "error":
                     # 에러 발생 시
-                    yield f"data: {json.dumps({
+                    data_json = json.dumps({
                         'type': 'error',
                         'step': stream_data['step'],
                         'step_name': stream_data['step_name'],
                         'error': stream_data['error'],
                         'message': stream_data['message'],
                         'timestamp': datetime.now().isoformat()
-                    }, ensure_ascii=False)}\n\n"
+                    }, ensure_ascii=False)
+                    yield f"data: {data_json}\n\n"
                     break
                 
                 elif stream_data["type"] == "complete":
@@ -423,25 +427,27 @@ async def analyze_saju_stream(request: SajuRequest):
                         'total_time': stream_data.get('total_time', '5-7분')
                     }
                     
-                    yield f"data: {json.dumps({
+                    data_json = json.dumps({
                         'type': 'complete',
                         'analysis_id': analysis_id,
                         'final_analysis': final_analysis,
                         'message': stream_data['message'],
                         'total_time': stream_data.get('total_time', '5-7분'),
                         'timestamp': datetime.now().isoformat()
-                    }, ensure_ascii=False)}\n\n"
+                    }, ensure_ascii=False)
+                    yield f"data: {data_json}\n\n"
                     break
         
         except Exception as e:
             # 전역 에러 처리
             error_message = f"분석 중 오류가 발생했습니다: {str(e)}"
-            yield f"data: {json.dumps({
+            data_json = json.dumps({
                 'type': 'error',
                 'error': error_message,
                 'message': error_message,
                 'timestamp': datetime.now().isoformat()
-            }, ensure_ascii=False)}\n\n"
+            }, ensure_ascii=False)
+            yield f"data: {data_json}\n\n"
     
     # Server-Sent Events로 스트리밍 응답
     return StreamingResponse(
